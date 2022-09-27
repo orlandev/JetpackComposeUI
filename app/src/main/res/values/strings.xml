@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">JetpackComposeUI</string>
     <string name="dynamic_screen_name">Dynamic</string>
+    <string name="recomended">Recommended</string>
+    <string name="my_cars">My Cars</string>
+    <string name="my_phones">Phones</string>
+    <string name="my_trucks">Trucks</string>
 </resources>

@@ -2,9 +2,7 @@ package com.orlandev.jetpackcomposeui.utils
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,11 +21,14 @@ fun CircularImageListBar(
     onClick: () -> Unit
 ) {
     LazyRow(modifier = modifier) {
+        item {
+            Spacer(modifier = Modifier.width(10.dp))
+        }
 
-        items(listOfUri){ uri ->
+        items(listOfUri) { uri ->
             Card(
                 modifier = Modifier
-                    .size(85.dp)
+                    .size(75.dp)
                     .padding(8.dp)
                     .clickable {
                         onClick()
@@ -40,6 +41,10 @@ fun CircularImageListBar(
                     CircularProgressIndicator(color = Color.DarkGray)
                 })
             }
+        }
+
+        item {
+            Spacer(modifier = Modifier.width(10.dp))
         }
     }
 }
