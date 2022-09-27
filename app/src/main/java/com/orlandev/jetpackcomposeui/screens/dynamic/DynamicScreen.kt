@@ -5,22 +5,27 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.orlandev.jetpackcomposeui.R
 import com.orlandev.jetpackcomposeui.ui.theme.JetpackComposeUITheme
 import com.orlandev.jetpackcomposeui.utils.CircularImageListBar
 import com.orlandev.jetpackcomposeui.utils.ImageLoader
+import java.util.*
 import kotlin.random.Random
 
 
@@ -33,18 +38,23 @@ fun DynamicScreen() {
         }
     }
 
+    var searchValue by remember {
+        mutableStateOf("")
+    }
 
     BoxWithConstraints(
         modifier = Modifier.fillMaxSize()
     ) {
 
         LazyColumn(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Top) {
-           item {
-               JCTopBar(
-                   modifier = Modifier.fillMaxWidth(),
-                   title = stringResource(id = com.orlandev.jetpackcomposeui.R.string.dynamic_screen_name)
-               )
-           }
+            item {
+                JCTopBar(
+                    modifier = Modifier.fillMaxWidth(),
+                    title = stringResource(id = com.orlandev.jetpackcomposeui.R.string.dynamic_screen_name)
+                ) {
+                    searchValue = it
+                }
+            }
 
             item {
                 CircularImageListBar(modifier = Modifier
@@ -52,6 +62,24 @@ fun DynamicScreen() {
                     .padding(vertical = 10.dp),
                     listOfUri = listOfPeoples.value,
                     onClick = {})
+            }
+
+            if (searchValue.isNotEmpty()) {
+                item {
+
+                    PlacesSection(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 10.dp),
+                        title = searchValue.replaceFirstChar {
+                            if (it.isLowerCase()) it.titlecase(
+                                Locale.ROOT
+                            ) else it.toString()
+                        },
+                        searchValue
+                    )
+
+                }
             }
 
             item {
@@ -147,13 +175,64 @@ fun PlaceUI(url: String) {
 
 
 @Composable
-fun JCTopBar(modifier: Modifier, title: String) {
+fun JCTopBar(modifier: Modifier, title: String, searchValue: (String) -> Unit) {
+
+    val (searchStateValue, setStateSearchValue) = remember {
+        mutableStateOf(TextFieldValue())
+    }
+
     Column(modifier = Modifier.padding(8.dp)) {
-        Row(modifier = modifier, horizontalArrangement = Arrangement.Start) {
-            IconButton(onClick = { /*TODO*/ }) {
+        Row(
+            modifier = modifier,
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = {
+
+
+            }) {
                 Icon(Icons.Default.Menu, contentDescription = null)
             }
+            OutlinedTextField(
+                modifier = Modifier
+                    .weight(8f),
+
+                placeholder = {
+                    Text(
+                        text = stringResource(id = R.string.search_criteria),
+                        style = MaterialTheme.typography.body1
+                    )
+                },
+                textStyle = MaterialTheme.typography.body2,
+                value = searchStateValue,
+                onValueChange = setStateSearchValue,
+                keyboardOptions = KeyboardOptions(
+                    autoCorrect = true,
+                    imeAction = ImeAction.Search
+                ),
+                keyboardActions = KeyboardActions(onSearch = {
+
+                }),
+                singleLine = true,
+                maxLines = 1,
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = Color.Transparent,
+                    unfocusedBorderColor = Color.Transparent
+                ),
+                trailingIcon = {
+                    IconButton(onClick = {
+                        searchValue(searchStateValue.text)
+                    }) {
+                        Icon(
+                            imageVector = Icons.Filled.Search,
+                            null,
+                            tint = Color.Gray
+                        )
+                    }
+                }
+            )
         }
+
         Text(
             modifier = Modifier.padding(start = 12.dp),
             text = title,
@@ -161,7 +240,6 @@ fun JCTopBar(modifier: Modifier, title: String) {
             fontWeight = FontWeight.Bold
         )
     }
-
 }
 
 

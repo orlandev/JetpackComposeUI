@@ -5,4 +5,5 @@
     <string name="my_cars">My Cars</string>
     <string name="my_phones">Phones</string>
     <string name="my_trucks">Trucks</string>
+    <string name="search_criteria">Search</string>
 </resources>
